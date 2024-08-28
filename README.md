@@ -1,8 +1,11 @@
-# SIDE (Satellite Image Dataflow Engine)
+# SIDE (Satellite Images Dataflow Engine)
 
 
 ## Semantics of SIDE operators : 
-1. reduce
-2. map
-3. extractor
-4. combine
+- Combine
+- Map
+- Reduce
+- Extractor
+
+## Why SIDE ?
+- Arbitrary Images ?
