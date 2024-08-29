@@ -4,6 +4,11 @@ import time
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
+"""
+- Download the google earth engine and PyDrive libraries before using this class.
+- Download the Auth credentials json file from the google cloud console pass.
+"""
+
 class Extractor:
     def __init__(self, client_secrets_path='client_secrets.json'):
         """
