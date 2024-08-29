@@ -3,6 +3,7 @@ import os
 import time
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
+from loader import Loader
 
 """
 - Download the google earth engine and PyDrive libraries before using this class.
@@ -56,7 +57,8 @@ class Extractor:
 
                 try:
                     self.extract_and_download_image(image_info, geometry_object, file_name, folder_name)
-                    download_urls.append(f"Folder: {folder_name}, Image: {file_name}.tif")
+                    file_loc = f"{folder_name}"
+                    download_urls.append(file_loc)
                 except Exception as e:
                     print(f"An error occurred while processing image {index}: {e}")
 
@@ -148,12 +150,16 @@ class Extractor:
 
 
 # Example usage:
-# if __name__ == "__main__":
-#     ee.Initialize()
+if __name__ == "__main__":
+    ee.Authenticate(force=True)
+    ee.Initialize(project='ee-indiasat')
     
-#     path = 'LANDSAT/LC08/C02/T1_L2'
-#     geometry = ee.Geometry.Point([77.2, 28.6])
-#     date_range = ('2022-01-01', '2022-01-31')
+    path = 'LANDSAT/LC08/C02/T1_L2'
+    geometry = ee.Geometry.Point([77.2, 28.6])
+    date_range = ('2022-01-01', '2022-01-31')
 
-#     extractor = Extractor('../secrets/client_secrets.json')
-#     extractor.extract_images(path, geometry, date_range)
+    extractor = Extractor('./secrets/client_secrets.json')
+    download_url = extractor.extract_images(path, geometry, date_range)
+    loader = Loader()
+    images = loader.load_image_collection(download_url)
+    print(images)
