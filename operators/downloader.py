@@ -10,7 +10,7 @@ from loader import Loader
 - Download the Auth credentials json file from the google cloud console pass.
 """
 
-class Extractor:
+class Downloader:
     def __init__(self, client_secrets_path='client_secrets.json'):
         """
         Initializes the GEEImageExtractor with Google Drive authentication.
@@ -23,7 +23,7 @@ class Extractor:
         self.gauth.LocalWebserverAuth()
         self.drive = GoogleDrive(self.gauth)
 
-    def extract_images(self, path, geometry_object, date_range, bands=None, file_name="temp_file"):
+    def download(self, path, geometry_object, date_range, bands=None, file_name="temp_file"):
         """
         Extracts and downloads images from an ImageCollection in GEE based on the provided parameters.
 
@@ -142,8 +142,6 @@ class Extractor:
 
                     file1.GetContentFile(local_file_path)
                     print(f"File '{local_file_path}' downloaded successfully.")
-                else:
-                    print(f"File not found in the folder '{folder_name}'.")
 
         except Exception as e:
             print(f"An error occurred while accessing Google Drive: {e}")
@@ -158,8 +156,8 @@ if __name__ == "__main__":
     geometry = ee.Geometry.Point([77.2, 28.6])
     date_range = ('2022-01-01', '2022-01-31')
 
-    extractor = Extractor('./secrets/client_secrets.json')
-    download_url = extractor.extract_images(path, geometry, date_range)
+    downloader = Downloader('./secrets/client_secrets.json')
+    folder_names = downloader.download(path, geometry, date_range)
     loader = Loader()
-    images = loader.load_image_collection(download_url)
+    images = loader.load_image_collection(folder_names)
     print(images)
