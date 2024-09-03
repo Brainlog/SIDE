@@ -1,0 +1,13 @@
+from abc import ABC, abstractmethod
+
+class BaseOperator(ABC):
+    """
+    Abstract base class for all image operators.
+    """
+
+    @abstractmethod
+    def apply(self, image):
+        """
+        Apply the operator to an image.
+        """
+        pass
