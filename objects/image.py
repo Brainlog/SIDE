@@ -71,29 +71,81 @@ class Image:
 
         Args:
             reduction_type (str): The type of reduction operation ('mean', 'sum').
-            region (tuple): A tuple (start_row, end_row, start_col, end_col) defining the region of interest.
+            region (tuple): A tuple (start_row, end_row, start_col, end_col) defining the region of interest. (todo)
 
         Returns:
             float: The result of the reduction operation.
         """
         return self.reducer.reduce_region(reduction_type)
 
+    def reduce(self, reduction_type):
+        """
+        Apply reduction operation on a specified region of the image.
 
-# Example Usage
-if __name__ == "__main__":
-    # Create an example image using random data
-    height, width, bands = 1000, 1000, 1
-    data = cp.zeros((height, width, bands))
+        Args:
+            reduction_type (str): The type of reduction operation ('mean', 'sum').
+            region (tuple): A tuple (start_row, end_row, start_col, end_col) defining the region of interest. (todo)
+
+        Returns:
+            float: The result of the reduction operation.
+        """
+        return self.reducer.reduce(reduction_type)
+
+
+# Example Usage of reduce_region functionality
+# if __name__ == "__main__":
+#     # Create an example image using random data
+#     height, width, bands = 1000, 1000, 1
+#     data = cp.zeros((height, width, bands))
     
-    # Initialize the Image object
-    image = Image(height=height, width=width, bands=bands, datatype="float32", data=data)
+#     # Initialize the Image object
+#     image = Image(height=height, width=width, bands=bands, datatype="float32", data=data)
     
-    # Accessing the image metadata and data
-    print("Timestamp:", image.get_timestamp())
-    print("Height:", image.get_height())
-    print("Width:", image.get_width())
-    print("Bands:", image.get_bands())
-    print("Datatype:", image.get_datatype())
+#     # Accessing the image metadata and data
+#     print("Timestamp:", image.get_timestamp())
+#     print("Height:", image.get_height())
+#     print("Width:", image.get_width())
+#     print("Bands:", image.get_bands())
+#     print("Datatype:", image.get_datatype())
     
-    print("image data : ", image.reduce_region("mean"))
+#     print("image data : ", image.reduce_region("max"))
+
+
+## Example of reducer functionality
+# if __name__ == "__main__":
+#     # Create a small test image (3x3 pixels with 3 bands)
+#     height, width, bands = 3, 3, 3
+#     data = cp.array([[[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+#                      [[9, 8, 7], [6, 5, 4], [3, 2, 1]],
+#                      [[1, 4, 7], [2, 5, 8], [3, 6, 9]]], dtype=cp.float32)
+    
+#     image = Image(height=height, width=width, bands=bands, datatype="float32", data=data)
+    
+#     # Print the input data
+#     print("Input Image Data:")
+#     print(data.get())  # Use .get() to bring data to the CPU for display
+
+#     # Initialize the ImageReducer object
+
+#     # Perform max reduction across the bands
+#     max_value_image = image.reduce("max")
+#     print("\nMax value image:")
+#     print(max_value_image.get())  # Use .get() to bring data to the CPU for display
+
+#     # Perform min reduction across the bands
+#     min_value_image = image.reduce("min")
+#     print("\nMin value image:")
+#     print(min_value_image.get())  # Use .get() to bring data to the CPU for display
+
+#     # Perform mean reduction across the bands
+#     mean_value_image = image.reduce("mean")
+#     print("\nMean value image:")
+#     print(mean_value_image.get())  # Use .get() to bring data to the CPU for display
+
+#     # Perform sum reduction across the bands
+#     sum_value_image = image.reduce("sum")
+#     print("\nSum value image:")
+#     print(sum_value_image.get())  # Use .get() to bring data to the CPU for display
+
+
 
