@@ -2,8 +2,6 @@
 ## fields : timestamp, height, widht, bands, datatype, data, temp_path, geometry object
 ## methods : get_timestamp, get_height, get_width, get_bands, get_datatype, get_data, get_temp_path, set_temp_path, get_geometry, set_geometry
 
-
-import cupy as cp
 import datetime
 from operators.reduce import ImageReducer
 
@@ -92,7 +90,7 @@ class Image:
         return self.reducer.reduce(reduction_type)
 
 
-# Example Usage of reduce_region functionality
+## Example Usage of reduce_region functionality
 # if __name__ == "__main__":
 #     # Create an example image using random data
 #     height, width, bands = 1000, 1000, 1
