@@ -52,9 +52,70 @@ class ImageCollection:
             (height, width, bands): The result of the reduction operation.
         """
         return self.reducer.reduce(reduction_type)
+
+    
+    def map(self, func):
+        """
+        Apply a function to each image in the stack.
+
+        Args:
+            stacked_images (cupy.ndarray): Stacked image array with shape (height, width, bands, images).
+            func (callable): Function to apply. It should accept NIR and RED bands as inputs.
+        
+        Returns:
+            (height, width, number of images) : A new image collection having only one band
+        """
+        height, width, bands, num_images = self.stacked_image_data.shape
+        new_images = cp.empty((height, width, num_images))  # Prepare an empty array for results
+        
+        for i in range(num_images):
+            # Extract the NIR and RED bands for the current image
+            nir = self.stacked_image_data[..., 0, i]  # Example: assuming band 0 is NIR
+            red = self.stacked_image_data[..., 1, i]  # Example: assuming band 1 is RED
+            
+            # Apply the function
+            new_images[..., i] = func(nir, red)
+        
+        return new_images
+        
     
 
-## Example Usage of reduce_region functionality
+def calculate_ndvi(nir, red):
+    """
+    Calculate NDVI from NIR and RED bands.
+    
+    Args:
+        nir (cupy.ndarray): NIR band image.
+        red (cupy.ndarray): RED band image.
+    
+    Returns:
+        cupy.ndarray: NDVI image.
+    """
+    return (nir - red) / (nir + red)
+
+# only user can handle how to write the vectorized mapping
+# def second_way_to_implement_map():
+#     """
+#     Calculate NDVI for a stack of images.
+
+#     Args:
+#         stacked_images (cupy.ndarray): Stacked image array with shape (height, width, bands, images).
+    
+#     Returns:
+#         cupy.ndarray: NDVI image stack.
+#     """
+#     # Assume band 0 is NIR and band 1 is RED
+#     nir_band = stacked_images[..., 0, :]  # Extract NIR band from all images
+#     red_band = stacked_images[..., 1, :]  # Extract RED band from all images
+    
+#     # Calculate NDVI using vectorized operations
+#     ndvi_stack = (nir_band - red_band) / (nir_band + red_band + cp.finfo(cp.float32).eps)  # Adding epsilon to avoid division by zero
+    
+#     return ndvi_stack
+
+    
+
+## Example Usage of reducer functionality
 if __name__ == "__main__":
 
     height, width, bands = 3, 3, 3
@@ -70,11 +131,18 @@ if __name__ == "__main__":
 
     image_collection = ImageCollection([image1, image2])
 
-    print(f"image collection shape {image_collection.check_shape()}")
+    # print(f"image collection shape {image_collection.check_shape()}")
 
-    min_image = image_collection.reduce('sum')
+    # min_image = image_collection.reduce('sum')
 
-    print(f"reduce image collection {min_image}")
+    # print(f"reduce image collection {min_image}")
+
+    ndvi_image = image_collection.map(calculate_ndvi)
+
+    print(f"ndvi image shape {ndvi_image.shape}")
+
+
+    
 
 
         
