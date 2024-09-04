@@ -15,17 +15,45 @@ class Reducer(ABC):
         pass
 
 # reducer implementation for image collection 
-class ImageCollectionReducer(Reducer):
-    def reduce(self, image_collection):
+class FeatureCollectionReducer(Reducer):
+    def __init__(self, image_data):
+        self.image_data = image_data
+    
+    def reduce(self, reducer_type):
         # Implement reduction logic specific to image collections
         pass
 
 
 # reducer implementation for feature collection
-class FeatureCollectionReducer(Reducer):
-    def reduce(self, feature_collection):
-        # Implement reduction logic specific to feature collections
-        pass
+class ImageCollectionReducer(Reducer):
+    def __init__(self, image_collection_data):
+        self.image_collection_data = image_collection_data
+
+    def reduce(self, reduction_type):
+        """
+        Apply the specified reduction operation across the bands of the image.
+        
+        Args:
+            reduction_type (str): The type of reduction operation ('max', 'min', etc.).
+
+        Returns:
+            cupy.ndarray: A (height, width, bands) array where each pixel value is the result of the reduction
+                          applied across the bands.
+        """
+        if reduction_type == 'max':
+            # Reduce across the bands (axis=-1) to get the max value for each pixel
+            return cp.max(self.image_collection_data, axis=-1)
+        elif reduction_type == 'min':
+            # Reduce across the bands (axis=-1) to get the min value for each pixel
+            return cp.min(self.image_collection_data, axis=-1)
+        elif reduction_type == 'mean':
+            # Compute the mean across the bands (axis=-1) for each pixel
+            return cp.mean(self.image_collection_data, axis=-1)
+        elif reduction_type == 'sum':
+            # Compute the sum across the bands (axis=-1) for each pixel
+            return cp.sum(self.image_collection_data, axis=-1)
+        else:
+            raise ValueError(f"Unsupported reduction type '{reduction_type}'. Supported types are 'max', 'min', 'mean', and 'sum'.")
 
 
 
