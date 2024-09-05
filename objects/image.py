@@ -56,7 +56,8 @@ class Image:
             dst_transform (affine.Affine): The target affine transform.
             dst_res (float): The target resolution (scale).
         """
-        
+        if(dst_crs == None):
+            dst_crs = self.crs
         src = self.metadata
         metadata = src.meta.copy()
         transform, width, height = calculate_default_transform(src.crs, dst_crs, src.width, src.height, *src.bounds, resolution=dst_res)
