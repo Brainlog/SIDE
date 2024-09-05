@@ -55,4 +55,4 @@ class Loader:
                 image.data = data
                 images.append(image)
         
-        return ImageCollection(image_path_list=[img.file_path for img in images], metadata_image_collection={"images": [img.file_path for img in images]})
+        return ImageCollection(images, image_path_list=[img.file_path for img in images], metadata_image_collection={"images": [img.file_path for img in images]})
