@@ -4,7 +4,11 @@
 
 
 from abc import ABC, abstractmethod
-import cupy as cp
+import cupy as np
+from objects.image_collection import ImageCollection
+from objects.image import Image
+import numpy as np
+import copy
 
 class Reducer(ABC):
     @abstractmethod
@@ -14,54 +18,12 @@ class Reducer(ABC):
         """
         pass
 
-# reducer implementation for image collection 
-class FeatureCollectionReducer(Reducer):
-    def __init__(self, image_data):
-        self.image_data = image_data
-    
-    def reduce(self, reducer_type):
-        # Implement reduction logic specific to image collections
+
+class Reducer():
+    def __init__(self):
         pass
 
-
-# reducer implementation for feature collection
-class ImageCollectionReducer(Reducer):
-    def __init__(self, image_collection_data):
-        self.image_collection_data = image_collection_data
-
-    def reduce(self, reduction_type):
-        """
-        Apply the specified reduction operation across the bands of the image.
-        
-        Args:
-            reduction_type (str): The type of reduction operation ('max', 'min', etc.).
-
-        Returns:
-            cupy.ndarray: A (height, width, bands) array where each pixel value is the result of the reduction
-                          applied across the bands.
-        """
-        if reduction_type == 'max':
-            # Reduce across the bands (axis=-1) to get the max value for each pixel
-            return cp.max(self.image_collection_data, axis=-1)
-        elif reduction_type == 'min':
-            # Reduce across the bands (axis=-1) to get the min value for each pixel
-            return cp.min(self.image_collection_data, axis=-1)
-        elif reduction_type == 'mean':
-            # Compute the mean across the bands (axis=-1) for each pixel
-            return cp.mean(self.image_collection_data, axis=-1)
-        elif reduction_type == 'sum':
-            # Compute the sum across the bands (axis=-1) for each pixel
-            return cp.sum(self.image_collection_data, axis=-1)
-        else:
-            raise ValueError(f"Unsupported reduction type '{reduction_type}'. Supported types are 'max', 'min', 'mean', and 'sum'.")
-
-
-
-class ImageReducer:
-    def __init__(self, image_data):
-        self.image_data = image_data
-
-    def reduce_region(self, reduction_type):
+    def reduce_region(self, image, reduction_type):
         """
         Apply the specified reduction operation to the given region of the image.
 
@@ -72,24 +34,26 @@ class ImageReducer:
         Returns:
             float or any other reduction result.
         """
-        
+        new_image = copy.deepcopy(image)
         if reduction_type == 'mean':
-            return cp.mean(self.image_data).get()  # Use .get() to move data from GPU to CPU
+            new_image.data = np.mean(image) 
         elif reduction_type == 'sum':
-            return cp.sum(self.image_data).get()  # Use .get() to move data from GPU to CPU
+            new_image.data =  np.sum(image).get()  # Use .get() to move data from GPU to cpu
         elif reduction_type == 'min':
-            return cp.min(self.image_data).get()  # Minimum value in the region
+            new_image.data =  np.min(image).get()  # Minimum value in the region
         elif reduction_type == 'max':
-            return cp.max(self.image_data).get()  # Maximum value in the region
+            new_image.data =  np.max(image).get()  # Maximum value in the region
         elif reduction_type == 'std':
-            return cp.std(self.image_data).get()  # Standard deviation of values
+            new_image.data =  np.std(image).get()  # Standard deviation of values
         elif reduction_type == 'median':
-            return cp.median(self.image_data).get()  # Median value of the region
+            new_image.data =  np.median(image).get()  # Median value of the region
         else:
             raise ValueError("Unsupported reduction type. Use 'mean', 'sum', 'min', 'max', 'std', or 'median'.")
         
+        return new_image
+        
     
-    def reduce(self, reduction_type):
+    def reduce_image(self, image, reduction_type):
         """
         Apply the specified reduction operation across the bands of the image.
         
@@ -100,31 +64,61 @@ class ImageReducer:
             cupy.ndarray: A 2D array where each pixel value is the result of the reduction
                           applied across the bands.
         """
+        new_image = copy.deepcopy(image)
         if reduction_type == 'max':
             # Reduce across the bands (axis=-1) to get the max value for each pixel
-            return cp.max(self.image_data, axis=-1)
+            new_image =  np.max(image, axis=-1)
         elif reduction_type == 'min':
             # Reduce across the bands (axis=-1) to get the min value for each pixel
-            return cp.min(self.image_data, axis=-1)
+            new_image =  np.min(image, axis=-1)
         elif reduction_type == 'mean':
             # Compute the mean across the bands (axis=-1) for each pixel
-            return cp.mean(self.image_data, axis=-1)
+            new_image =  np.mean(image, axis=-1)
         elif reduction_type == 'sum':
             # Compute the sum across the bands (axis=-1) for each pixel
-            return cp.sum(self.image_data, axis=-1)
+            new_image =  np.sum(image, axis=-1)
+        else:
+            raise ValueError(f"Unsupported reduction type '{reduction_type}'. Supported types are 'max', 'min', 'mean', and 'sum'.")
+        
+        return new_image
+        
+
+    def reduce_image_collection(self, image_collection, reduction_type):
+        """
+        Apply the specified reduction operation across the bands of the image.
+        
+        Args:
+            reduction_type (str): The type of reduction operation ('max', 'min', etc.).
+
+        Returns:
+            cupy.ndarray: A (height, width, bands) array where each pixel value is the result of the reduction
+                          applied across the bands.
+        """
+        new_image = Image(file_path=None)
+        if reduction_type == 'max':
+            # Reduce across the bands (axis=-1) to get the max value for each pixel
+            new_image =  np.max(image_collection, axis=-1)
+        elif reduction_type == 'min':
+            # Reduce across the bands (axis=-1) to get the min value for each pixel
+            new_image =  np.min(image_collection, axis=-1)
+        elif reduction_type == 'mean':
+            # Compute the mean across the bands (axis=-1) for each pixel
+            new_image =  np.mean(image_collection, axis=-1)
+        elif reduction_type == 'sum':
+            # Compute the sum across the bands (axis=-1) for each pixel
+            new_image =  np.sum(image_collection, axis=-1)
         else:
             raise ValueError(f"Unsupported reduction type '{reduction_type}'. Supported types are 'max', 'min', 'mean', and 'sum'.")
 
+        return new_image
 
 
-# centeral class to manage all the reducer type may be used
-class ReducerManager:
-    def __init__(self):
-        self.reducers = {
-            'image': ImageReducer(),
-            'image_collection': ImageCollectionReducer(),
-            'feature_collection': FeatureCollectionReducer()
-        }
-    
-    def get_reducer(self, data_type):
-        return self.reducers.get(data_type)
+
+    def reducer(self, obj, func):
+
+        if isinstance(obj, Image):
+            self.reduce_image(obj, func)
+        elif isinstance(obj, ImageCollection):
+            self.reduce_image_collection(obj, func)
+        else:
+            raise ValueError(f"Unsupported object type. Supported types Image, ImageCollection")

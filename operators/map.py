@@ -12,7 +12,7 @@ class Map():
     def __init__(self):
         pass
 
-    def map(self, image_collection, func):
+    def map_image_collection(self, image_collection, func):
         """
         Apply the given function to each image in the ImageCollection.
 
@@ -42,7 +42,7 @@ class Map():
         return ImageCollection(transformed_images, image_path_list=None, metadata_image_collection=None) # todo image path and metadata
 
     
-    def map(self, image, func):
+    def map_image(self, image, func):
         """
         Apply the given function to image
 
@@ -61,6 +61,15 @@ class Map():
         transformed_image.data = transformed_data
         
         return transformed_image
+    
+    def map(self, obj, func):
+
+        if isinstance(obj, Image):
+            self.map_image(obj, func)
+        elif isinstance(obj, ImageCollection):
+            self.map_image_collection(obj, func)
+        else:
+            raise ValueError(f"Unsupported object type. Supported types Image, ImageCollection")
 
 
 
