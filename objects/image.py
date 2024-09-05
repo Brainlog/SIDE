@@ -21,7 +21,8 @@ class Image:
         self.data = None
         self.metadata = None
         self.crs = None
-        self._extract_metadata()
+        if(file_path != None):
+            self._extract_metadata()
 
     def _extract_metadata(self):
         """Extract metadata from the .tif file."""

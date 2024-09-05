@@ -3,10 +3,26 @@ from shapely.geometry import shape, Point, Polygon, LineString
 from shapely.ops import unary_union
 
 class Geometry:
-    def __init__(self, filepath):
-        """Initialize the Geometry class by loading a shapefile and storing its geometry."""
-        self.gdf = gpd.read_file(filepath)
-        self.geom = self._get_shapely_geom()
+    def __init__(self, obj):
+        """
+        Initialize the Geometry class.
+        
+        Args:
+            obj (str or Polygon/Point/LineString): File path to shapefile or Shapely geometry object.
+        """
+        if isinstance(obj, str):
+            # If a string is provided, assume it's a file path
+            try:
+                self.gdf = gpd.read_file(obj)
+                self.geom = self._get_shapely_geom()
+            except Exception as e:
+                raise ValueError(f"Error reading file {obj}: {e}")
+        elif isinstance(obj, (Polygon, Point, LineString)):
+            # If a geometry object is provided, use it directly
+            self.geom = obj
+            self.gdf = gpd.GeoDataFrame(geometry=[self.geom], crs="EPSG:4326")
+        else:
+            raise TypeError("Input must be a file path (str) or a valid Shapely geometry object.")
 
     def _get_shapely_geom(self):
         """Extract the Shapely geometry from the first feature in the GeoDataFrame."""

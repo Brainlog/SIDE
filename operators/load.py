@@ -26,7 +26,7 @@ class Loader:
         if isinstance(data, Image):
             # Single Image object
             return self._load_image(data)
-        elif isinstance(data, list) and all(isinstance(d, Image) for d in data):
+        elif isinstance(data, ImageCollection):
             # List of Image objects
             return self._load_image_collection(data)
         else:
@@ -47,7 +47,7 @@ class Loader:
             image.data = data
         return image
 
-    def _load_image_collection(self, image_objects):
+    def _load_image_collection(self, image_collection):
         """
         Load multiple images from a list of Image objects.
 
@@ -58,9 +58,10 @@ class Loader:
             ImageCollection: An ImageCollection object with loaded data.
         """
         images = []
-        for image in image_objects:
-            with rasterio.open(image.file_path) as src:
+        for image_path in image_collection.get_file_paths():
+            with rasterio.open(image_path) as src:
                 data = src.read()
+                image = Image(image_path)
                 image.data = data
                 images.append(image)
         
