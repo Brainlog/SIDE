@@ -6,6 +6,7 @@ from geometry import Geometry
 from rasterio.warp import calculate_default_transform, reproject, Resampling
 from rasterio.enums import Resampling
 import random
+import copy
 
 class Image:
     def __init__(self, file_path):
@@ -32,7 +33,8 @@ class Image:
             self.metadata = src.meta.copy()
             self.timestamp = datetime.strptime(src.tags().get('TIFFTAG_DATETIME', '1970:01:01 00:00:00'), '%Y:%m:%d %H:%M:%S')
             self.crs = src.crs
-            self.bounds = src.bounds.copy()
+            # deep copy src.bounds
+            self.bounds = copy.deepcopy(src.bounds)
             # Create a default geometry from the bounds of the raster
             self.geometry = Geometry(self._create_geometry(src.bounds))
 

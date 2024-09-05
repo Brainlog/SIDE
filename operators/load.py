@@ -1,7 +1,16 @@
+import sys
+import os
+
+script_dir = os.path.dirname(__file__)
+mymodule_dir1 = os.path.join(script_dir, '..', 'objects')
+mymodule_dir2 = os.path.join(script_dir, '..', 'operators')
+sys.path.append(mymodule_dir1)
+sys.path.append(mymodule_dir2)
+
 import rasterio
 import numpy as np
-from ..objects.image import Image
-from ..objects.image_collection import ImageCollection
+from image import Image
+from image_collection import ImageCollection
 
 class Loader:
     def __init__(self):

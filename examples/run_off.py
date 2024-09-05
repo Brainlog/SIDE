@@ -1,9 +1,18 @@
-from ..operators.combine import Combiner
-from ..objects.image import Image
-from ..objects.image_collection import ImageCollection
-from ..operators.load import Loader
-from ..operators.map import Mapper
-from ..operators.reduce import Reducer
+import sys
+import os
+
+script_dir = os.path.dirname(__file__)
+mymodule_dir1 = os.path.join(script_dir, '..', 'objects')
+mymodule_dir2 = os.path.join(script_dir, '..', 'operators')
+sys.path.append(mymodule_dir1)
+sys.path.append(mymodule_dir2)
+
+from combine import Combiner
+from image import Image
+from image_collection import ImageCollection
+from load import Loader
+from map import Mapper
+from reduce import Reducer
 
 
 sr1 = Image(file_path="../images/sr1_INDIA_2017_18.tif")
