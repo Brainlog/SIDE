@@ -1,29 +1,23 @@
-## class image_collection interface
-## fields : image_object_list, metadata_image_collection
-
-import cupy as cp
-from image import Image
-
+import numpy as np
 
 class ImageCollection:
-    def __init__(self, image_path_list, metadata_image_collection=None):
-        """
-        Initialize an ImageCollection.
+    def __init__(self, image_list):
+        """Initialize with a list of Image objects."""
+        self.images = image_list
 
-        Args:
-            metadata_image_collection (dict, optional): Metadata for the image collection.
-        """
-        self.image_object_list = None
-        self.metadata_image_collection = metadata_image_collection or {}
-        self.image_list = image_path_list
-        self._check_dimensions()
+    def map(self, func):
+        """Apply a function to each image in the collection."""
+        return [func(image) for image in self.images]
 
-    def set_image_object_list(self, image_object_list):
-        self.image_object_list = image_object_list
-    
-
-
+    def reduce(self, reducer):
+        """Reduce the collection by applying a reduction function across images."""
+        data_stack = np.array([image.data for image in self.images])
         
-    
-
-    
+        if reducer == 'mean':
+            return np.mean(data_stack, axis=0)
+        elif reducer == 'max':
+            return np.max(data_stack, axis=0)
+        elif reducer == 'min':
+            return np.min(data_stack, axis=0)
+        else:
+            raise ValueError("Unsupported reducer")
