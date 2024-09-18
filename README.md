@@ -21,3 +21,8 @@
 
 - GPU_Load = (Image) -> (Image)
 - GPU_Deload = (Image) -> (Image) 
+
+
+**TODOS**
+
+1. Combine operator
